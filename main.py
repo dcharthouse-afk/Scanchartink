@@ -1,4 +1,6 @@
 import time
+import json
+import os
 from datetime import datetime, timedelta, timezone
 import requests
 from bs4 import BeautifulSoup
@@ -6,35 +8,41 @@ from bs4 import BeautifulSoup
 # ================= AAPKI DETAILS SET HAIN =================
 BOT_TOKEN = "9050887652:AAEBkohIKEkp69jJP9ExRnSCrradzj9iZiM"
 CHANNEL_ID = "-1004442551906"
-SCAN_INTERVAL_SECONDS = 60  # Har 1 minute me saare scanners check honge
+SCAN_INTERVAL_SECONDS = 60    # Har 1 minute me saare scanners check honge
+REPEAT_COOLDOWN_MINS = 15     # Pullback scanners me same stock kitne minute baad dubara aa sake
+STATE_FILE = "alert_state.json"
 # ==========================================================
 
 SCANNERS = [
-    # 1. Morning PDH Heavy Volume Breakout (Buy)
+    # 1. Morning PDH Heavy Volume Breakout (Buy) -> Din me 1 baar
     {
         "name": "🚀 1st 5-Min PDH Heavy Volume Breakout (Buy)",
         "emoji": "🟢",
+        "allow_repeat": False,  # Ye sirf 9:15 candle ka hai, isliye din me 1 baar
         "clause": "( {33489} ( [=1] 5 minute close > 1 day ago high and [=-1] 5 minute sma ( [=1] 5 minute volume * 8 , 21 ) < [=1] 5 minute volume ) )"
     },
 
-    # 2. Morning PDL Heavy Volume Breakdown (Sell)
+    # 2. Morning PDL Heavy Volume Breakdown (Sell) -> Din me 1 baar
     {
         "name": "🩸 1st 5-Min PDL Heavy Volume Breakdown (Sell)",
         "emoji": "🔴",
+        "allow_repeat": False,  # Ye bhi sirf 9:15 candle ka hai, din me 1 baar
         "clause": "( {33489} ( [=1] 5 minute close < 1 day ago low and [=-1] 5 minute sma ( [=1] 5 minute volume * 8 , 21 ) < [=1] 5 minute volume ) )"
     },
 
-    # 3. PDL Pullback Breakdown (Short Entry)
+    # 3. PDL Pullback Breakdown (Short Entry) -> Naye time par dubara aayega
     {
         "name": "🔻 5-Min PDL Pullback Breakdown (Short Entry)",
         "emoji": "📉",
+        "allow_repeat": True,   # Naye timeframe/candle par dubara alert dega!
         "clause": "( {33489} ( [=-1] 5 minute sma ( [=1] 5 minute volume * 8 , 21 ) < [=1] 5 minute volume and [=1] 5 minute close < 1 day ago low and [-2] 5 minute volume > [-1] 5 minute volume and [0] 5 minute close < [-1] 5 minute low and [0] 5 minute close < [-2] 5 minute low and [-2] 5 minute close < [-2] 5 minute open and [-1] 5 minute close > [-1] 5 minute open and [-2] 5 minute close < 1 day ago low and [-1] 5 minute close < 1 day ago low and [0] 5 minute close < 1 day ago low ) )"
     },
 
-    # 4. PDH Bullish Pullback (Buy Entry) - Naya Scanner
+    # 4. PDH Bullish Pullback (Buy Entry) -> Naye time par dubara aayega
     {
         "name": "📈 5-Min PDH Pullback Breakout (Buy Entry)",
         "emoji": "🟢",
+        "allow_repeat": True,   # Naye timeframe/candle par dubara alert dega!
         "clause": "( {33489} ( [=-1] 5 minute sma ( [=1] 5 minute volume * 8 , 21 ) < [=1] 5 minute volume and [=1] 5 minute close > 1 day ago high and [-2] 5 minute volume > [-1] 5 minute volume and [0] 5 minute close > [-1] 5 minute high and [0] 5 minute close > [-2] 5 minute high and [-2] 5 minute close > [-2] 5 minute open and [-1] 5 minute close < [-1] 5 minute open and [-2] 5 minute close > 1 day ago high and [-1] 5 minute close > 1 day ago high and [0] 5 minute close > 1 day ago high ) )"
     }
 ]
@@ -43,16 +51,57 @@ CHARTINK_PAGE_URL = "https://chartink.com/screener/"
 CHARTINK_API_URL = "https://chartink.com/screener/process"
 
 IST = timezone(timedelta(hours=5, minutes=30))
-already_alerted = set()
-last_reset_date = None
+
+
+def get_ist_now():
+    return datetime.now(IST)
 
 
 def get_ist_time(fmt="%I:%M %p"):
-    return datetime.now(IST).strftime(fmt)
+    return get_ist_now().strftime(fmt)
 
 
-def send_startup_test():
-    """Script chalu hote hi Telegram channel par charo active scanners ki list bhejta hai"""
+def get_today_str():
+    return get_ist_now().strftime("%Y-%m-%d")
+
+
+# ================= MEMORY (STATE) FUNCTIONS =================
+def load_state():
+    """File se aaj ke alerted stocks aur unka last alert timestamp load karta hai."""
+    today = get_today_str()
+    if os.path.exists(STATE_FILE):
+        try:
+            with open(STATE_FILE, "r") as f:
+                data = json.load(f)
+                if data.get("date") == today:
+                    return {
+                        "date": today,
+                        "startup_sent": data.get("startup_sent", False),
+                        # Format: { "ScannerName|Symbol": {"time": timestamp, "count": 1} }
+                        "alerted": data.get("alerted", {})
+                    }
+        except Exception as e:
+            print(f"⚠️ State file read error: {e}")
+
+    return {"date": today, "startup_sent": False, "alerted": {}}
+
+
+def save_state(state):
+    """Alerted stocks aur unke timestamps ko wapas file me save karta hai."""
+    try:
+        with open(STATE_FILE, "w") as f:
+            json.dump(state, f, indent=2)
+    except Exception as e:
+        print(f"⚠️ State file save error: {e}")
+# ============================================================
+
+
+def send_startup_test(state):
+    """Din me sirf 1 baar Startup Message bhejega"""
+    if state["startup_sent"]:
+        print("ℹ️ Startup message aaj pehle hi bheja ja chuka hai. Skipping...")
+        return True
+
     scanner_list_text = "\n".join([f"{s['emoji']} {s['name']}" for s in SCANNERS])
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
     payload = {
@@ -67,6 +116,8 @@ def send_startup_test():
     res = requests.post(url, data=payload, timeout=10).json()
     if res.get("ok"):
         print("✅ SUCCESS: Telegram Channel par 4-Scanner Startup Message chala gaya!")
+        state["startup_sent"] = True
+        save_state(state)
         return True
     else:
         print("❌ TELEGRAM ERROR:", res.get("description"))
@@ -74,13 +125,10 @@ def send_startup_test():
 
 
 def run_all_scanners():
-    global already_alerted, last_reset_date
-
-    # Roz subah naye din par purane alerts ki memory reset karein
-    today_date = datetime.now(IST).date()
-    if last_reset_date != today_date:
-        already_alerted.clear()
-        last_reset_date = today_date
+    state = load_state()
+    already_alerted = state["alerted"]
+    state_updated = False
+    now_ts = get_ist_now().timestamp()
 
     with requests.Session() as session:
         headers = {
@@ -97,6 +145,7 @@ def run_all_scanners():
             s_name = scanner["name"]
             s_emoji = scanner["emoji"]
             s_clause = scanner["clause"]
+            allow_repeat = scanner.get("allow_repeat", False)
 
             response = session.post(
                 CHARTINK_API_URL,
@@ -111,10 +160,29 @@ def run_all_scanners():
 
                 for item in stocks_data:
                     symbol = item["nsecode"]
-                    unique_key = (s_name, symbol)
-                    if unique_key not in already_alerted:
-                        already_alerted.add(unique_key)
+                    unique_key = f"{s_name}|{symbol}"
+                    
+                    # Check karein ki pehle alert aaya hai ya nahi
+                    prev_record = already_alerted.get(unique_key)
+
+                    if prev_record is None:
+                        # Aaj pehli baar aaya hai -> Send Alert!
+                        already_alerted[unique_key] = {"time": now_ts, "count": 1}
+                        item["alert_count"] = 1
                         new_stocks.append(item)
+                        state_updated = True
+
+                    elif allow_repeat:
+                        # Agar Pullback scanner hai, to check karein ki Cooldown time (15 min) poora hua ya nahi
+                        last_alert_ts = prev_record["time"]
+                        mins_passed = (now_ts - last_alert_ts) / 60.0
+
+                        if mins_passed >= REPEAT_COOLDOWN_MINS:
+                            new_count = prev_record.get("count", 1) + 1
+                            already_alerted[unique_key] = {"time": now_ts, "count": new_count}
+                            item["alert_count"] = new_count
+                            new_stocks.append(item)
+                            state_updated = True
 
                 if new_stocks:
                     send_telegram_alert(s_name, s_emoji, new_stocks)
@@ -123,6 +191,9 @@ def run_all_scanners():
                     print(f"[{get_ist_time('%H:%M:%S')}] {s_name} -> No new stock.")
 
             time.sleep(1)
+
+    if state_updated:
+        save_state(state)
 
 
 def send_telegram_alert(scanner_name, emoji, new_stocks):
@@ -135,8 +206,12 @@ def send_telegram_alert(scanner_name, emoji, new_stocks):
         symbol = stock["nsecode"]
         ltp = stock["close"]
         per_chg = stock["per_chg"]
+        count = stock.get("alert_count", 1)
         tv_link = f"https://in.tradingview.com/chart/?symbol=NSE:{symbol}"
-        lines.append(f"{emoji} *[{symbol}]({tv_link})* — ₹{ltp} ({per_chg}%)")
+        
+        # Agar stock dubara naye time par aaya hai, to uske aage (2nd Alert / Re-Entry) likh kar aayega!
+        repeat_tag = f" 🔄 *(Alert #{count})*" if count > 1 else ""
+        lines.append(f"{emoji} *[{symbol}]({tv_link})* — ₹{ltp} ({per_chg}%){repeat_tag}")
 
     payload = {
         "chat_id": CHANNEL_ID,
@@ -149,11 +224,19 @@ def send_telegram_alert(scanner_name, emoji, new_stocks):
 
 def main():
     print("🔄 Connecting 4-Scanner Bot to Telegram...")
-    if not send_startup_test():
+    state = load_state()
+    if not send_startup_test(state):
         return
 
     print(f"🚀 Total {len(SCANNERS)} Scanners Active & Running!")
+    
     while True:
+        now_ist = get_ist_now()
+        # Market close hone par (3:35 PM) script band ho jayegi
+        if now_ist.hour > 15 or (now_ist.hour == 15 and now_ist.minute >= 35):
+            print("🛑 Market Closed (3:35 PM IST). Stopping bot & saving state...")
+            break
+
         try:
             run_all_scanners()
         except Exception as e:
