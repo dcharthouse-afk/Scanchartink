@@ -1,0 +1,24 @@
+name: Chartink 4-Scanner Bot
+
+on:
+  schedule:
+    - cron: '45 3-10 * * 1-5'
+  workflow_dispatch:
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4
+
+      - name: Run scanner script
+        run: python main.py
