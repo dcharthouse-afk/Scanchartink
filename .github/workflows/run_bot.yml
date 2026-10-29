@@ -2,12 +2,24 @@ name: Chartink 4-Scanner Bot
 
 on:
   schedule:
-    - cron: '45 3-10 * * 1-5'
+    # Subah 9:10 AM IST (3:40 UTC) par start hoga, aur agar kabhi ruka to har ghante check karega
+    - cron: '40 3-9 * * 1-5'
   workflow_dispatch:
+
+# SABSE ZAROORI: Ye ek time par SIRF 1 BOT chalne dega! Duplicate bots ko rok dega.
+concurrency:
+  group: chartink-4-scanner-bot
+  cancel-in-progress: false
+
+# Memory file (alert_state.json) save karne ki permission
+permissions:
+  contents: write
 
 jobs:
   run-bot:
     runs-on: ubuntu-latest
+    timeout-minutes: 350 # Max ~6 hours (9:10 AM se 3:00 PM+), zarurat padne par agli shift sambhal legi
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -22,3 +34,13 @@ jobs:
 
       - name: Run scanner script
         run: python main.py
+        continue-on-error: true
+
+      # Bot band hone par aaj ke stocks ki memory GitHub me save karega
+      - name: Save Alert Memory
+        if: always()
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add alert_state.json || true
+          git diff --staged --quiet || (git commit -m "Update alert state [skip ci]" && git pull --rebase && git push)
