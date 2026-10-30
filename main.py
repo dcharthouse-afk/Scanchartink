@@ -18,7 +18,7 @@ SCANNERS = [
     {
         "name": "🚀 1st 5-Min PDH Heavy Volume Breakout (Buy)",
         "emoji": "🟢",
-        "allow_repeat": False,  # Ye sirf 9:15 candle ka hai, isliye din me 1 baar
+        "allow_repeat": False,  
         "clause": "( {33489} ( [=1] 5 minute close > 1 day ago high and [=-1] 5 minute sma ( [=1] 5 minute volume * 8 , 21 ) < [=1] 5 minute volume ) )"
     },
 
@@ -26,24 +26,24 @@ SCANNERS = [
     {
         "name": "🩸 1st 5-Min PDL Heavy Volume Breakdown (Sell)",
         "emoji": "🔴",
-        "allow_repeat": False,  # Ye bhi sirf 9:15 candle ka hai, din me 1 baar
+        "allow_repeat": False,  
         "clause": "( {33489} ( [=1] 5 minute close < 1 day ago low and [=-1] 5 minute sma ( [=1] 5 minute volume * 8 , 21 ) < [=1] 5 minute volume ) )"
     },
 
-    # 3. PDL Pullback Breakdown (Short Entry) -> Naye time par dubara aayega
+    # 3. Falcon Long (Buy Entry) -> Naye time par dubara aayega
     {
-        "name": "🔻 5-Min PDL Pullback Breakdown (Short Entry)",
-        "emoji": "📉",
-        "allow_repeat": True,   # Naye timeframe/candle par dubara alert dega!
-        "clause": "( {33489} ( [=-1] 5 minute sma ( [=1] 5 minute volume * 8 , 21 ) < [=1] 5 minute volume and [=1] 5 minute close < 1 day ago low and [-2] 5 minute volume > [-1] 5 minute volume and [0] 5 minute close < [-1] 5 minute low and [0] 5 minute close < [-2] 5 minute low and [-2] 5 minute close < [-2] 5 minute open and [-1] 5 minute close > [-1] 5 minute open and [-2] 5 minute close < 1 day ago low and [-1] 5 minute close < 1 day ago low and [0] 5 minute close < 1 day ago low ) )"
+        "name": "🦅 Falcon Long",
+        "emoji": "📈",
+        "allow_repeat": True,   
+        "clause": "( {33489} (  [=-1] 5 minute sma (  [=1] 5 minute volume *  8 , 21 ) <  [=1] 5 minute volume and  [=1] 5 minute close >  1 day ago high and  [-2] 5 minute volume >  [-1] 5 minute volume and  [0] 5 minute close >  [-1] 5 minute high and  [0] 5 minute close >  [-2] 5 minute high and  [-2] 5 minute close >  [-2] 5 minute open and  [-1] 5 minute close <  [-1] 5 minute open and  [-2] 5 minute close >  1 day ago high and  [-1] 5 minute close >  1 day ago high and  [0] 5 minute close >  1 day ago high and  [-1] 5 minute high <=  [-2] 5 minute high and  [-1] 5 minute low >  [-2] 5 minute low ) )"
     },
 
-    # 4. PDH Bullish Pullback (Buy Entry) -> Naye time par dubara aayega
+    # 4. Falcon Short (Sell Entry) -> Naye time par dubara aayega
     {
-        "name": "📈 5-Min PDH Pullback Breakout (Buy Entry)",
-        "emoji": "🟢",
-        "allow_repeat": True,   # Naye timeframe/candle par dubara alert dega!
-        "clause": "( {33489} ( [=-1] 5 minute sma ( [=1] 5 minute volume * 8 , 21 ) < [=1] 5 minute volume and [=1] 5 minute close > 1 day ago high and [-2] 5 minute volume > [-1] 5 minute volume and [0] 5 minute close > [-1] 5 minute high and [0] 5 minute close > [-2] 5 minute high and [-2] 5 minute close > [-2] 5 minute open and [-1] 5 minute close < [-1] 5 minute open and [-2] 5 minute close > 1 day ago high and [-1] 5 minute close > 1 day ago high and [0] 5 minute close > 1 day ago high ) )"
+        "name": "🦅 Falcon Short",
+        "emoji": "📉",
+        "allow_repeat": True,   
+        "clause": "( {33489} (  [=-1] 5 minute sma (  [=1] 5 minute volume *  8 , 21 ) <  [=1] 5 minute volume and  [=1] 5 minute close <  1 day ago low and  [-2] 5 minute volume >  [-1] 5 minute volume and  [0] 5 minute close <  [-1] 5 minute low and  [0] 5 minute close <  [-2] 5 minute low and  [-2] 5 minute close <  [-2] 5 minute open and  [-1] 5 minute close >  [-1] 5 minute open and  [-2] 5 minute close <  1 day ago low and  [-1] 5 minute close <  1 day ago low and  [0] 5 minute close <  1 day ago low and  [-1] 5 minute low >=  [-2] 5 minute low and  [-1] 5 minute high <  [-2] 5 minute high ) )"
     }
 ]
 
@@ -77,7 +77,6 @@ def load_state():
                     return {
                         "date": today,
                         "startup_sent": data.get("startup_sent", False),
-                        # Format: { "ScannerName|Symbol": {"time": timestamp, "count": 1} }
                         "alerted": data.get("alerted", {})
                     }
         except Exception as e:
@@ -173,7 +172,7 @@ def run_all_scanners():
                         state_updated = True
 
                     elif allow_repeat:
-                        # Agar Pullback scanner hai, to check karein ki Cooldown time (15 min) poora hua ya nahi
+                        # Agar Falcon scanner hai, to check karein ki Cooldown time (15 min) poora hua ya nahi
                         last_alert_ts = prev_record["time"]
                         mins_passed = (now_ts - last_alert_ts) / 60.0
 
