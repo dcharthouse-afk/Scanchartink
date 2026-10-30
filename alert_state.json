@@ -1,5 +1,82 @@
 {
-  "date": "2026-10-29",
+  "date": "2026-10-30",
   "startup_sent": true,
-  "alerted": {}
+  "alerted": {
+    "\ud83d\ude80 1st 5-Min PDH Heavy Volume Breakout (Buy)|INDIGO": {
+      "time": 1793332615.931293,
+      "count": 1
+    },
+    "\ud83d\ude80 1st 5-Min PDH Heavy Volume Breakout (Buy)|TRENT": {
+      "time": 1793332615.931293,
+      "count": 1
+    },
+    "\ud83d\ude80 1st 5-Min PDH Heavy Volume Breakout (Buy)|LAURUSLABS": {
+      "time": 1793332615.931293,
+      "count": 1
+    },
+    "\ud83d\ude80 1st 5-Min PDH Heavy Volume Breakout (Buy)|COFORGE": {
+      "time": 1793332615.931293,
+      "count": 1
+    },
+    "\ud83e\ude78 1st 5-Min PDL Heavy Volume Breakdown (Sell)|ABB": {
+      "time": 1793332615.931293,
+      "count": 1
+    },
+    "\ud83e\ude78 1st 5-Min PDL Heavy Volume Breakdown (Sell)|GODREJCP": {
+      "time": 1793332615.931293,
+      "count": 1
+    },
+    "\ud83e\ude78 1st 5-Min PDL Heavy Volume Breakdown (Sell)|CAMS": {
+      "time": 1793332615.931293,
+      "count": 1
+    },
+    "\ud83e\ude78 1st 5-Min PDL Heavy Volume Breakdown (Sell)|COALINDIA": {
+      "time": 1793332615.931293,
+      "count": 1
+    },
+    "\ud83e\ude78 1st 5-Min PDL Heavy Volume Breakdown (Sell)|SAGILITY": {
+      "time": 1793332615.931293,
+      "count": 1
+    },
+    "\ud83e\ude78 1st 5-Min PDL Heavy Volume Breakdown (Sell)|SUZLON": {
+      "time": 1793332615.931293,
+      "count": 1
+    },
+    "\ud83d\udd3b 5-Min PDL Pullback Breakdown (Short Entry)|SUZLON": {
+      "time": 1793345426.308839,
+      "count": 3
+    },
+    "\ud83d\udd3b 5-Min PDL Pullback Breakdown (Short Entry)|SAGILITY": {
+      "time": 1793333943.747059,
+      "count": 1
+    },
+    "\ud83d\udcc8 5-Min PDH Pullback Breakout (Buy Entry)|INDIGO": {
+      "time": 1793335670.53932,
+      "count": 2
+    },
+    "\ud83d\udd3b 5-Min PDL Pullback Breakdown (Short Entry)|ABB": {
+      "time": 1793336931.738796,
+      "count": 2
+    },
+    "\ud83d\udd3b 5-Min PDL Pullback Breakdown (Short Entry)|CAMS": {
+      "time": 1793335936.417398,
+      "count": 1
+    },
+    "\ud83d\udcc8 5-Min PDH Pullback Breakout (Buy Entry)|TRENT": {
+      "time": 1793347084.605246,
+      "count": 3
+    },
+    "\ud83d\udd3b 5-Min PDL Pullback Breakdown (Short Entry)|COALINDIA": {
+      "time": 1793341842.82483,
+      "count": 1
+    },
+    "\ud83d\udcc8 5-Min PDH Pullback Breakout (Buy Entry)|LAURUSLABS": {
+      "time": 1793344298.334324,
+      "count": 1
+    },
+    "\ud83d\udcc8 5-Min PDH Pullback Breakout (Buy Entry)|COFORGE": {
+      "time": 1793345359.409529,
+      "count": 1
+    }
+  }
 }
