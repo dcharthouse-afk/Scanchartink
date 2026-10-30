@@ -33,6 +33,8 @@ jobs:
         run: pip install requests beautifulsoup4
 
       - name: Run scanner script
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
         run: python main.py
         continue-on-error: true
 
