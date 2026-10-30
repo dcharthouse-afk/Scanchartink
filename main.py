@@ -6,7 +6,7 @@ import requests
 from bs4 import BeautifulSoup
 
 # ================= AAPKI DETAILS SET HAIN =================
-BOT_TOKEN = "9050887652:AAEBkohIKEkp69jJP9ExRnSCrradzj9iZiM"
+BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 CHANNEL_ID = "-1004442551906"
 SCAN_INTERVAL_SECONDS = 60    # Har 1 minute me saare scanners check honge
 REPEAT_COOLDOWN_MINS = 15     # Pullback scanners me same stock kitne minute baad dubara aa sake
