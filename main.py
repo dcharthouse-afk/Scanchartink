@@ -27,14 +27,14 @@ IST = timezone(timedelta(hours=5, minutes=30))
 
 SCANNERS = [
     {
-        "name": "🚀 1st 5-Min PDH Heavy Volume Breakout (Buy)",
+        "name": "🚀 Trade terrain intra stocks (Buy)",
         "emoji": "🟢",
         "allow_repeat": False,
         "clause": "( {33489} ( [=1] 5 minute close > 1 day ago high and [=-1] 5 minute sma ( [=1] 5 minute volume * 8 , 21 ) < [=1] 5 minute volume ) )"
     },
 
     {
-        "name": "🩸 1st 5-Min PDL Heavy Volume Breakdown (Sell)",
+        "name": "🩸 Trade Terrain intra stocks (Sell)",
         "emoji": "🔴",
         "allow_repeat": False,
         "clause": "( {33489} ( [=1] 5 minute close < 1 day ago low and [=-1] 5 minute sma ( [=1] 5 minute volume * 8 , 21 ) < [=1] 5 minute volume ) )"
