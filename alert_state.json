@@ -1,154 +1,30 @@
 {
-  "date": "2026-11-03",
+  "date": "2026-11-04",
   "startup_sent": true,
   "alerted": {
-    "\ud83d\ude80 1st 5-Min PDH Heavy Volume Breakout (Buy)|GVT&D": {
-      "time": 1793668473.255423,
+    "\ud83d\ude80 Trade terrain intra stocks (Buy)|APOLLOHOSP": {
+      "time": 1793766561.450725,
       "count": 1
     },
-    "\ud83d\ude80 1st 5-Min PDH Heavy Volume Breakout (Buy)|PHOENIXLTD": {
-      "time": 1793668473.255423,
+    "\ud83d\ude80 Trade terrain intra stocks (Buy)|BHEL": {
+      "time": 1793766561.450725,
       "count": 1
     },
-    "\ud83d\ude80 1st 5-Min PDH Heavy Volume Breakout (Buy)|RELIANCE": {
-      "time": 1793668473.255423,
+    "\ud83d\ude80 Trade terrain intra stocks (Buy)|ITC": {
+      "time": 1793766561.450725,
       "count": 1
     },
-    "\ud83d\ude80 1st 5-Min PDH Heavy Volume Breakout (Buy)|CDSL": {
-      "time": 1793668473.255423,
+    "\ud83e\ude78 Trade Terrain intra stocks (Sell)|CGPOWER": {
+      "time": 1793766563.33302,
       "count": 1
     },
-    "\ud83d\ude80 1st 5-Min PDH Heavy Volume Breakout (Buy)|DELHIVERY": {
-      "time": 1793668473.255423,
+    "\ud83e\udd85 Falcon Long|BHEL": {
+      "time": 1793766744.146655,
       "count": 1
     },
-    "\ud83d\ude80 1st 5-Min PDH Heavy Volume Breakout (Buy)|BEL": {
-      "time": 1793668473.255423,
-      "count": 1
-    },
-    "\ud83d\ude80 1st 5-Min PDH Heavy Volume Breakout (Buy)|BANKBARODA": {
-      "time": 1793668473.255423,
-      "count": 1
-    },
-    "\ud83d\ude80 1st 5-Min PDH Heavy Volume Breakout (Buy)|JIOFIN": {
-      "time": 1793668473.255423,
-      "count": 1
-    },
-    "\ud83d\ude80 1st 5-Min PDH Heavy Volume Breakout (Buy)|TATASTEEL": {
-      "time": 1793668473.255423,
-      "count": 1
-    },
-    "\ud83d\ude80 1st 5-Min PDH Heavy Volume Breakout (Buy)|IOC": {
-      "time": 1793668473.255423,
-      "count": 1
-    },
-    "\ud83e\ude78 1st 5-Min PDL Heavy Volume Breakdown (Sell)|SYRMA": {
-      "time": 1793668475.150272,
-      "count": 1
-    },
-    "\ud83e\ude78 1st 5-Min PDL Heavy Volume Breakdown (Sell)|POLICYBZR": {
-      "time": 1793668475.150272,
-      "count": 1
-    },
-    "\ud83d\ude80 1st 5-Min PDH Heavy Volume Breakout (Buy)|BOSCHLTD": {
-      "time": 1793677899.518584,
-      "count": 1
-    },
-    "\ud83d\ude80 1st 5-Min PDH Heavy Volume Breakout (Buy)|INDIGO": {
-      "time": 1793677899.518584,
-      "count": 1
-    },
-    "\ud83d\ude80 1st 5-Min PDH Heavy Volume Breakout (Buy)|MARICO": {
-      "time": 1793677899.518584,
-      "count": 1
-    },
-    "\ud83d\ude80 1st 5-Min PDH Heavy Volume Breakout (Buy)|HEROMOTOCO": {
-      "time": 1793677959.613924,
-      "count": 1
-    },
-    "\ud83d\ude80 1st 5-Min PDH Heavy Volume Breakout (Buy)|ASIANPAINT": {
-      "time": 1793677959.613924,
-      "count": 1
-    },
-    "\ud83d\ude80 1st 5-Min PDH Heavy Volume Breakout (Buy)|AXISBANK": {
-      "time": 1793677959.613924,
-      "count": 1
-    },
-    "\ud83d\ude80 1st 5-Min PDH Heavy Volume Breakout (Buy)|DMART": {
-      "time": 1793678019.628909,
-      "count": 1
-    },
-    "\ud83d\ude80 1st 5-Min PDH Heavy Volume Breakout (Buy)|GODFRYPHLP": {
-      "time": 1793678019.628909,
-      "count": 1
-    },
-    "\ud83d\ude80 1st 5-Min PDH Heavy Volume Breakout (Buy)|ICICIBANK": {
-      "time": 1793678019.628909,
-      "count": 1
-    },
-    "\ud83d\ude80 1st 5-Min PDH Heavy Volume Breakout (Buy)|HDFCBANK": {
-      "time": 1793678019.628909,
-      "count": 1
-    },
-    "\ud83d\ude80 1st 5-Min PDH Heavy Volume Breakout (Buy)|MCX": {
-      "time": 1793678079.632024,
-      "count": 1
-    },
-    "\ud83d\ude80 1st 5-Min PDH Heavy Volume Breakout (Buy)|ADANIENT": {
-      "time": 1793678079.632024,
-      "count": 1
-    },
-    "\ud83d\ude80 1st 5-Min PDH Heavy Volume Breakout (Buy)|PIDILITIND": {
-      "time": 1793678079.632024,
-      "count": 1
-    },
-    "\ud83d\ude80 1st 5-Min PDH Heavy Volume Breakout (Buy)|MOTILALOFS": {
-      "time": 1793678079.632024,
-      "count": 1
-    },
-    "\ud83d\ude80 1st 5-Min PDH Heavy Volume Breakout (Buy)|SHRIRAMFIN": {
-      "time": 1793678079.632024,
-      "count": 1
-    },
-    "\ud83d\ude80 1st 5-Min PDH Heavy Volume Breakout (Buy)|KALYANKJIL": {
-      "time": 1793678079.632024,
-      "count": 1
-    },
-    "\ud83d\ude80 1st 5-Min PDH Heavy Volume Breakout (Buy)|ANGELONE": {
-      "time": 1793678079.632024,
-      "count": 1
-    },
-    "\ud83d\ude80 1st 5-Min PDH Heavy Volume Breakout (Buy)|SOLARINDS": {
-      "time": 1793678139.731232,
-      "count": 1
-    },
-    "\ud83d\ude80 1st 5-Min PDH Heavy Volume Breakout (Buy)|360ONE": {
-      "time": 1793678139.731232,
-      "count": 1
-    },
-    "\ud83e\udd85 Falcon Long|HDFCBANK": {
-      "time": 1793678622.774262,
-      "count": 1
-    },
-    "\ud83e\udd85 Falcon Long|SOLARINDS": {
-      "time": 1793679403.141726,
-      "count": 1
-    },
-    "\ud83e\udd85 Falcon Long|360ONE": {
-      "time": 1793682525.376728,
-      "count": 2
-    },
-    "\ud83e\udd85 Falcon Long|MOTILALOFS": {
-      "time": 1793687328.542038,
-      "count": 1
-    },
-    "\ud83e\udd85 Falcon Long|ANGELONE": {
-      "time": 1793687929.194861,
-      "count": 1
-    },
-    "\ud83e\udd85 Falcon Long|SHRIRAMFIN": {
-      "time": 1793688049.033446,
-      "count": 1
+    "\ud83e\udd85 Falcon Long|APOLLOHOSP": {
+      "time": 1793785837.133126,
+      "count": 3
     }
   }
 }
