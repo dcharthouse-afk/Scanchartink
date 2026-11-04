@@ -39,20 +39,6 @@ SCANNERS = [
         "allow_repeat": False,
         "clause": "( {33489} ( [=1] 5 minute close < 1 day ago low and [=-1] 5 minute sma ( [=1] 5 minute volume * 8 , 21 ) < [=1] 5 minute volume ) )"
     },
-
-    {
-        "name": "🦅 Falcon Long",
-        "emoji": "📈",
-        "allow_repeat": True,
-        "clause": "( {33489} (  [=-1] 5 minute sma (  [=1] 5 minute volume *  8 , 21 ) <  [=1] 5 minute volume and  [=1] 5 minute close >  1 day ago high and  [-2] 5 minute volume >  [-1] 5 minute volume and  [0] 5 minute close >  [-1] 5 minute high and  [0] 5 minute close >  [-2] 5 minute high and  [-2] 5 minute close >  [-2] 5 minute open and  [-1] 5 minute close <  [-1] 5 minute open and  [-2] 5 minute close >  1 day ago high and  [-1] 5 minute close >  1 day ago high and  [0] 5 minute close >  1 day ago high and  [-1] 5 minute high <=  [-2] 5 minute high and  [-1] 5 minute low >  [-2] 5 minute low ) )"
-    },
-
-    {
-        "name": "🦅 Falcon Short",
-        "emoji": "📉",
-        "allow_repeat": True,
-        "clause": "( {33489} (  [=-1] 5 minute sma (  [=1] 5 minute volume *  8 , 21 ) <  [=1] 5 minute volume and  [=1] 5 minute close <  1 day ago low and  [-2] 5 minute volume >  [-1] 5 minute volume and  [0] 5 minute close <  [-1] 5 minute low and  [0] 5 minute close <  [-2] 5 minute low and  [-2] 5 minute close <  [-2] 5 minute open and  [-1] 5 minute close >  [-1] 5 minute open and  [-2] 5 minute close <  1 day ago low and  [-1] 5 minute close <  1 day ago low and  [0] 5 minute close <  1 day ago low and  [-1] 5 minute low >=  [-2] 5 minute low and  [-1] 5 minute high <  [-2] 5 minute high ) )"
-    }
 ]
 
 # ==================================================
