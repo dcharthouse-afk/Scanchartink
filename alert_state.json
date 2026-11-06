@@ -1,213 +1,69 @@
 {
-  "date": "2026-11-05",
+  "date": "2026-11-06",
   "startup_sent": true,
   "alerted": {
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|MARUTI": {
-      "time": 1793850670.907912,
+    "\ud83d\ude80 Trade terrain intra stocks (Buy)|LTM": {
+      "time": 1793938530.138341,
       "count": 1
     },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|INDIGO": {
-      "time": 1793850670.907912,
+    "\ud83d\ude80 Trade terrain intra stocks (Buy)|MPHASIS": {
+      "time": 1793938530.138341,
       "count": 1
     },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|ASIANPAINT": {
-      "time": 1793850670.907912,
+    "\ud83d\ude80 Trade terrain intra stocks (Buy)|BHARTIARTL": {
+      "time": 1793938530.138341,
       "count": 1
     },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|CHOLAFIN": {
-      "time": 1793850670.907912,
+    "\ud83d\ude80 Trade terrain intra stocks (Buy)|INFY": {
+      "time": 1793938530.138341,
       "count": 1
     },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|AXISBANK": {
-      "time": 1793850670.907912,
+    "\ud83d\ude80 Trade terrain intra stocks (Buy)|INDHOTEL": {
+      "time": 1793938530.138341,
       "count": 1
     },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|GODREJCP": {
-      "time": 1793850670.907912,
+    "\ud83d\ude80 Trade terrain intra stocks (Buy)|KALYANKJIL": {
+      "time": 1793938530.138341,
       "count": 1
     },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|VBL": {
-      "time": 1793850670.907912,
+    "\ud83d\ude80 Trade terrain intra stocks (Buy)|WIPRO": {
+      "time": 1793938530.138341,
       "count": 1
     },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|DELHIVERY": {
-      "time": 1793850670.907912,
+    "\ud83e\ude78 Trade Terrain intra stocks (Sell)|POLYCAB": {
+      "time": 1793938532.083309,
       "count": 1
     },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|HINDPETRO": {
-      "time": 1793850670.907912,
+    "\ud83e\ude78 Trade Terrain intra stocks (Sell)|DATAPATTNS": {
+      "time": 1793938532.083309,
       "count": 1
     },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|BPCL": {
-      "time": 1793850670.907912,
+    "\ud83e\ude78 Trade Terrain intra stocks (Sell)|GLENMARK": {
+      "time": 1793938532.083309,
       "count": 1
     },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|LTF": {
-      "time": 1793850670.907912,
+    "\ud83e\ude78 Trade Terrain intra stocks (Sell)|GODFRYPHLP": {
+      "time": 1793938532.083309,
       "count": 1
     },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|NHPC": {
-      "time": 1793850670.907912,
+    "\ud83e\ude78 Trade Terrain intra stocks (Sell)|ASTRAL": {
+      "time": 1793938532.083309,
       "count": 1
     },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|ULTRACEMCO": {
-      "time": 1793850730.837049,
+    "\ud83e\ude78 Trade Terrain intra stocks (Sell)|HINDALCO": {
+      "time": 1793938532.083309,
       "count": 1
     },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|ICICIBANK": {
-      "time": 1793850730.837049,
+    "\ud83e\ude78 Trade Terrain intra stocks (Sell)|CGPOWER": {
+      "time": 1793938532.083309,
       "count": 1
     },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|AUBANK": {
-      "time": 1793850730.837049,
+    "\ud83e\ude78 Trade Terrain intra stocks (Sell)|NATIONALUM": {
+      "time": 1793938532.083309,
       "count": 1
     },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|INDUSINDBK": {
-      "time": 1793850730.837049,
-      "count": 1
-    },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|PGEL": {
-      "time": 1793850730.837049,
-      "count": 1
-    },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|LICHSGFIN": {
-      "time": 1793850730.837049,
-      "count": 1
-    },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|ANGELONE": {
-      "time": 1793850730.837049,
-      "count": 1
-    },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|ADANIPOWER": {
-      "time": 1793850730.837049,
-      "count": 1
-    },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|ASHOKLEY": {
-      "time": 1793850730.837049,
-      "count": 1
-    },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|BANDHANBNK": {
-      "time": 1793850730.837049,
-      "count": 1
-    },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|IDFCFIRSTB": {
-      "time": 1793850730.837049,
-      "count": 1
-    },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|YESBANK": {
-      "time": 1793850730.837049,
-      "count": 1
-    },
-    "\ud83e\ude78 Trade Terrain intra stocks (Sell)|CUMMINSIND": {
-      "time": 1793850732.785275,
-      "count": 1
-    },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|BSE": {
-      "time": 1793850790.934817,
-      "count": 1
-    },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|M&M": {
-      "time": 1793850790.934817,
-      "count": 1
-    },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|CDSL": {
-      "time": 1793850790.934817,
-      "count": 1
-    },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|MOTILALOFS": {
-      "time": 1793850790.934817,
-      "count": 1
-    },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|BAJFINANCE": {
-      "time": 1793850790.934817,
-      "count": 1
-    },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|SHRIRAMFIN": {
-      "time": 1793850790.934817,
-      "count": 1
-    },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|HDFCBANK": {
-      "time": 1793850790.934817,
-      "count": 1
-    },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|CAMS": {
-      "time": 1793850790.934817,
-      "count": 1
-    },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|TATASTEEL": {
-      "time": 1793850790.934817,
-      "count": 1
-    },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|IOC": {
-      "time": 1793850790.934817,
-      "count": 1
-    },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|MAHABANK": {
-      "time": 1793850790.934817,
-      "count": 1
-    },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|UJJIVANSFB": {
-      "time": 1793850790.934817,
-      "count": 1
-    },
-    "\ud83e\ude78 Trade Terrain intra stocks (Sell)|PIIND": {
-      "time": 1793850792.776893,
-      "count": 1
-    },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|LT": {
-      "time": 1793850851.016693,
-      "count": 1
-    },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|360ONE": {
-      "time": 1793850851.016693,
-      "count": 1
-    },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|SBICARD": {
-      "time": 1793850851.016693,
-      "count": 1
-    },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|ABCAPITAL": {
-      "time": 1793850851.016693,
-      "count": 1
-    },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|NATIONALUM": {
-      "time": 1793850851.016693,
-      "count": 1
-    },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|MOTHERSON": {
-      "time": 1793850851.016693,
-      "count": 1
-    },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|CANBK": {
-      "time": 1793850851.016693,
-      "count": 1
-    },
-    "\ud83e\ude78 Trade Terrain intra stocks (Sell)|LUPIN": {
-      "time": 1793850852.877225,
-      "count": 1
-    },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|SBIN": {
-      "time": 1793850910.965383,
-      "count": 1
-    },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|AMBUJACEM": {
-      "time": 1793850910.965383,
-      "count": 1
-    },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|TMPV": {
-      "time": 1793850910.965383,
-      "count": 1
-    },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|BANKINDIA": {
-      "time": 1793850910.965383,
-      "count": 1
-    },
-    "\ud83d\ude80 Trade terrain intra stocks (Buy)|IRFC": {
-      "time": 1793850910.965383,
-      "count": 1
-    },
-    "\ud83e\ude78 Trade Terrain intra stocks (Sell)|APOLLOHOSP": {
-      "time": 1793850912.896772,
+    "\ud83e\ude78 Trade Terrain intra stocks (Sell)|ONGC": {
+      "time": 1793938532.083309,
       "count": 1
     }
   }
