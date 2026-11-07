@@ -1,4 +1,3 @@
-
 import time
 import json
 import os
@@ -12,7 +11,7 @@ from bs4 import BeautifulSoup
 BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 CHANNEL_ID = "-1004442551906"
 
-SCAN_INTERVAL_SECONDS = 60
+SCAN_INTERVAL_SECONDS = 15
 REPEAT_COOLDOWN_MINS = 15
 STATE_FILE = "alert_state.json"
 
@@ -24,6 +23,7 @@ IST = timezone(timedelta(hours=5, minutes=30))
 
 
 # ================= SCANNER CONDITIONS =============
+# Exact clauses as provided by you (No changes made)
 
 SCANNERS = [
     {
@@ -38,6 +38,13 @@ SCANNERS = [
         "emoji": "🔴",
         "allow_repeat": False,
         "clause": "( {33489} ( [=1] 5 minute close < 1 day ago low and [=-1] 5 minute sma ( [=1] 5 minute volume * 8 , 21 ) < [=1] 5 minute volume ) )"
+    },
+
+    {
+        "name": "🔥 Boss candle",
+        "emoji": "⚡",
+        "allow_repeat": False,
+        "clause": "( {33489} ( [=1] 5 minute volume > [=-1] 25 minute volume * 1.7 and ( {33489} ( [=1] 5 minute close > 1 day ago high or [=1] 5 minute close < 1 day ago low ) ) ) )"
     },
 ]
 
@@ -147,8 +154,9 @@ def send_startup_test(state):
     payload = {
         "chat_id": CHANNEL_ID,
         "text": (
-            "✅ *4-Scanner Bot Connected Successfully!*\n"
-            f"🕒 *Time:* {get_ist_time()}\n\n"
+            "✅ *09:20 Candle Scanner Bot Ready!*\n"
+            f"🕒 *Ready Time:* {get_ist_time()}\n"
+            "⏳ *Scan Window:* 09:20:05 AM – 12:05 PM IST\n\n"
             f"📋 *Active Scanners ({len(SCANNERS)}):*\n"
             f"{scanner_list_text}"
         ),
@@ -156,27 +164,12 @@ def send_startup_test(state):
     }
 
     try:
-        started = time.monotonic()
-
-        response = requests.post(
-            url,
-            data=payload,
-            timeout=15
-        )
-
-        elapsed = time.monotonic() - started
+        response = requests.post(url, data=payload, timeout=15)
         result = response.json()
-
-        log(
-            f"TELEGRAM STARTUP RESPONSE | "
-            f"HTTP {response.status_code} | "
-            f"Duration: {elapsed:.2f}s"
-        )
 
         if response.status_code == 200 and result.get("ok"):
             state["startup_sent"] = True
             save_state(state)
-
             log("STARTUP MESSAGE SENT SUCCESSFULLY.")
             return True
 
@@ -234,13 +227,7 @@ def send_telegram_alert(scanner_name, emoji, new_stocks):
 
     try:
         started = time.monotonic()
-
-        response = requests.post(
-            url,
-            data=payload,
-            timeout=15
-        )
-
+        response = requests.post(url, data=payload, timeout=15)
         elapsed = time.monotonic() - started
 
         try:
@@ -249,13 +236,11 @@ def send_telegram_alert(scanner_name, emoji, new_stocks):
             result = {}
 
         if response.status_code == 200 and result.get("ok"):
-
             log(
                 f"TELEGRAM SUCCESS | {scanner_name} | "
                 f"Stocks: {len(new_stocks)} | "
                 f"Duration: {elapsed:.2f}s"
             )
-
             return True
 
         log(
@@ -263,7 +248,6 @@ def send_telegram_alert(scanner_name, emoji, new_stocks):
             f"HTTP: {response.status_code} | "
             f"Response: {result}"
         )
-
         return False
 
     except Exception as e:
@@ -275,319 +259,149 @@ def send_telegram_alert(scanner_name, emoji, new_stocks):
 # ==================================================
 
 
+# ================= CHARTINK SESSION ===============
+
+def init_chartink_session():
+    """Session aur CSRF token banata hai."""
+    session = requests.Session()
+    headers = {
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/120.0.0.0 Safari/537.36"
+        )
+    }
+
+    log("CHARTINK SESSION | Requesting new CSRF token...")
+    page_response = session.get(CHARTINK_PAGE_URL, headers=headers, timeout=15)
+    page_response.raise_for_status()
+
+    soup = BeautifulSoup(page_response.text, "html.parser")
+    csrf_element = soup.find("meta", {"name": "csrf-token"})
+
+    if not csrf_element or not csrf_element.get("content"):
+        raise RuntimeError("Chartink CSRF token not found.")
+
+    headers["x-csrf-token"] = csrf_element.get("content")
+    headers["X-Requested-With"] = "XMLHttpRequest"
+    session.headers.update(headers)
+
+    log("CHARTINK SESSION READY | CSRF token configured.")
+    return session
+
+
+# ==================================================
+
+
 # ================= CHARTINK SCANNING ==============
 
-def run_all_scanners():
+def run_all_scanners(session, state):
 
     cycle_started = time.monotonic()
-    cycle_time = get_ist_time()
-
-    log("=" * 55)
-    log(f"NEW SCAN CYCLE STARTED | Cycle time: {cycle_time}")
-    log("=" * 55)
-
-    state = load_state()
     already_alerted = state["alerted"]
 
-    # Chartink session and CSRF token
-    try:
+    for scanner_number, scanner in enumerate(SCANNERS, 1):
 
-        with requests.Session() as session:
+        s_name = scanner["name"]
+        s_emoji = scanner["emoji"]
+        s_clause = scanner["clause"]
+        allow_repeat = scanner.get("allow_repeat", False)
 
-            headers = {
-                "User-Agent": (
-                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                    "AppleWebKit/537.36 "
-                    "(KHTML, like Gecko) "
-                    "Chrome/120.0.0.0 Safari/537.36"
-                )
-            }
+        scan_started = time.monotonic()
 
-            page_started = time.monotonic()
-
-            log("CHARTINK SESSION | Requesting screener page...")
-
-            page_response = session.get(
-                CHARTINK_PAGE_URL,
-                headers=headers,
+        try:
+            response = session.post(
+                CHARTINK_API_URL,
+                data={"scan_clause": s_clause},
                 timeout=15
             )
 
-            page_elapsed = time.monotonic() - page_started
+            response_elapsed = time.monotonic() - scan_started
+
+            if response.status_code in (401, 403, 419):
+                log("CSRF Token expired! Refreshing session...")
+                return False
+
+            if response.status_code != 200:
+                log(f"SCANNER HTTP ERROR | {s_name} | Status: {response.status_code}")
+                continue
+
+            stocks_data = response.json().get("data", [])
+
+            if not isinstance(stocks_data, list):
+                log(f"INVALID DATA FORMAT | {s_name}")
+                continue
 
             log(
-                f"CHARTINK PAGE RESPONSE | "
-                f"HTTP {page_response.status_code} | "
-                f"Duration: {page_elapsed:.2f}s"
+                f"SCAN {scanner_number}/{len(SCANNERS)} | {s_name} | "
+                f"Matches: {len(stocks_data)} | {response_elapsed:.2f}s"
             )
 
-            page_response.raise_for_status()
+            detection_ts = get_ist_now().timestamp()
+            detection_time = get_ist_time()
 
-            soup = BeautifulSoup(
-                page_response.text,
-                "html.parser"
-            )
+            new_stocks = []
+            pending_records = []
 
-            csrf_element = soup.find(
-                "meta",
-                {"name": "csrf-token"}
-            )
+            for item in stocks_data:
+                symbol = item.get("nsecode")
+                if not symbol:
+                    continue
 
-            if not csrf_element:
-                log("ERROR: Chartink CSRF token not found.")
-                return
+                unique_key = f"{s_name}|{symbol}"
+                prev_record = already_alerted.get(unique_key)
 
-            csrf_token = csrf_element.get("content")
+                if prev_record is None:
+                    item["alert_count"] = 1
+                    new_stocks.append(item)
+                    pending_records.append(
+                        (unique_key, {"time": detection_ts, "count": 1})
+                    )
 
-            if not csrf_token:
-                log("ERROR: Chartink CSRF token is empty.")
-                return
+                elif allow_repeat:
+                    last_alert_ts = prev_record.get("time", detection_ts)
+                    mins_passed = (detection_ts - last_alert_ts) / 60.0
 
-            headers["x-csrf-token"] = csrf_token
-            headers["X-Requested-With"] = "XMLHttpRequest"
+                    if mins_passed >= REPEAT_COOLDOWN_MINS:
+                        new_count = prev_record.get("count", 1) + 1
+                        item["alert_count"] = new_count
+                        new_stocks.append(item)
+                        pending_records.append(
+                            (unique_key, {"time": detection_ts, "count": new_count})
+                        )
 
-            log("CHARTINK SESSION READY | CSRF token received.")
+            if new_stocks:
+                symbols = [item["nsecode"] for item in new_stocks]
+                log(f"NEW SIGNAL SYMBOLS | {s_name} | {', '.join(symbols)}")
 
-            # Run all four scanners
-            for scanner_number, scanner in enumerate(SCANNERS, 1):
-
-                s_name = scanner["name"]
-                s_emoji = scanner["emoji"]
-                s_clause = scanner["clause"]
-                allow_repeat = scanner.get("allow_repeat", False)
-
-                scan_started = time.monotonic()
-                scan_start_time = get_ist_time()
-
-                log("-" * 55)
-                log(
-                    f"SCANNER {scanner_number}/"
-                    f"{len(SCANNERS)} STARTED | {s_name}"
+                telegram_success = send_telegram_alert(
+                    s_name,
+                    s_emoji,
+                    new_stocks
                 )
-                log(f"SCAN REQUEST TIME: {scan_start_time}")
 
-                try:
+                if telegram_success:
+                    for unique_key, record in pending_records:
+                        already_alerted[unique_key] = record
 
-                    response = session.post(
-                        CHARTINK_API_URL,
-                        headers=headers,
-                        data={"scan_clause": s_clause},
-                        timeout=20
-                    )
-
-                    response_elapsed = (
-                        time.monotonic() - scan_started
-                    )
-
-                    response_time = get_ist_time()
+                    state["alerted"] = already_alerted
+                    save_state(state)
 
                     log(
-                        f"CHARTINK RESPONSE RECEIVED | "
-                        f"{s_name} | "
-                        f"HTTP {response.status_code} | "
-                        f"Response time: {response_time} | "
-                        f"Duration: {response_elapsed:.2f}s"
+                        f"ALERT SENT | {s_name} | "
+                        f"Stocks: {len(new_stocks)} | "
+                        f"Detection: {detection_time}"
                     )
 
-                    if response.status_code != 200:
+        except Exception as e:
+            log(f"SCANNER EXECUTION ERROR | {s_name} | {e}")
+            traceback.print_exc()
 
-                        log(
-                            f"SCANNER HTTP ERROR | {s_name} | "
-                            f"Status: {response.status_code} | "
-                            f"Body: {response.text[:300]}"
-                        )
-
-                        time.sleep(1)
-                        continue
-
-                    try:
-                        stocks_data = response.json().get("data", [])
-
-                    except Exception as e:
-
-                        log(
-                            f"CHARTINK JSON ERROR | "
-                            f"{s_name} | {e}"
-                        )
-
-                        traceback.print_exc()
-                        time.sleep(1)
-                        continue
-
-                    if not isinstance(stocks_data, list):
-                        log(
-                            f"INVALID DATA FORMAT | {s_name}"
-                        )
-                        time.sleep(1)
-                        continue
-
-                    log(
-                        f"CHARTINK MATCH COUNT | "
-                        f"{s_name} | "
-                        f"Qualified stocks: {len(stocks_data)}"
-                    )
-
-                    # Detection timestamp: response receive time
-                    detection_ts = get_ist_now().timestamp()
-                    detection_time = get_ist_time()
-
-                    new_stocks = []
-                    pending_records = []
-
-                    for item in stocks_data:
-
-                        symbol = item.get("nsecode")
-
-                        if not symbol:
-                            log(
-                                f"WARNING: Stock without NSE code "
-                                f"skipped in {s_name}"
-                            )
-                            continue
-
-                        unique_key = f"{s_name}|{symbol}"
-
-                        prev_record = already_alerted.get(
-                            unique_key
-                        )
-
-                        if prev_record is None:
-
-                            item["alert_count"] = 1
-                            new_stocks.append(item)
-
-                            pending_records.append(
-                                (
-                                    unique_key,
-                                    {
-                                        "time": detection_ts,
-                                        "count": 1
-                                    }
-                                )
-                            )
-
-                        elif allow_repeat:
-
-                            last_alert_ts = prev_record.get(
-                                "time", detection_ts
-                            )
-
-                            mins_passed = (
-                                detection_ts - last_alert_ts
-                            ) / 60.0
-
-                            if mins_passed >= REPEAT_COOLDOWN_MINS:
-
-                                new_count = (
-                                    prev_record.get("count", 1) + 1
-                                )
-
-                                item["alert_count"] = new_count
-                                new_stocks.append(item)
-
-                                pending_records.append(
-                                    (
-                                        unique_key,
-                                        {
-                                            "time": detection_ts,
-                                            "count": new_count
-                                        }
-                                    )
-                                )
-
-                    log(
-                        f"NEW SIGNAL COUNT | {s_name} | "
-                        f"New alerts: {len(new_stocks)} | "
-                        f"Detection time: {detection_time}"
-                    )
-
-                    if new_stocks:
-
-                        symbols = [
-                            item["nsecode"]
-                            for item in new_stocks
-                        ]
-
-                        log(
-                            f"NEW SIGNAL SYMBOLS | "
-                            f"{s_name} | {', '.join(symbols)}"
-                        )
-
-                        log(
-                            f"TELEGRAM SEND STARTED | "
-                            f"{s_name} | "
-                            f"Time: {get_ist_time()}"
-                        )
-
-                        telegram_success = send_telegram_alert(
-                            s_name,
-                            s_emoji,
-                            new_stocks
-                        )
-
-                        if telegram_success:
-
-                            # Save memory only after successful Telegram send
-                            for unique_key, record in pending_records:
-                                already_alerted[unique_key] = record
-
-                            state["alerted"] = already_alerted
-
-                            save_state(state)
-
-                            log(
-                                f"ALERT COMPLETED | {s_name} | "
-                                f"Stocks: {len(new_stocks)} | "
-                                f"Detection: {detection_time} | "
-                                f"Telegram sent: {get_ist_time()}"
-                            )
-
-                        else:
-
-                            log(
-                                f"ALERT NOT CONFIRMED | {s_name} | "
-                                f"Memory not updated; next scan may retry."
-                            )
-
-                    else:
-
-                        log(
-                            f"NO NEW STOCK | {s_name} | "
-                            f"Qualified by Chartink: "
-                            f"{len(stocks_data)}"
-                        )
-
-                    scan_total = time.monotonic() - scan_started
-
-                    log(
-                        f"SCANNER FINISHED | {s_name} | "
-                        f"Total duration: {scan_total:.2f}s"
-                    )
-
-                except Exception as e:
-
-                    log(
-                        f"SCANNER EXECUTION ERROR | "
-                        f"{s_name} | {e}"
-                    )
-
-                    traceback.print_exc()
-
-                time.sleep(1)
-
-    except Exception as e:
-
-        log(f"CHARTINK SESSION ERROR: {e}")
-        traceback.print_exc()
+        time.sleep(0.3)
 
     cycle_total = time.monotonic() - cycle_started
-
-    log("=" * 55)
-    log(
-        f"SCAN CYCLE COMPLETED | "
-        f"Total duration: {cycle_total:.2f} seconds"
-    )
-    log("=" * 55)
+    log(f"CYCLE DONE IN {cycle_total:.2f}s")
+    return True
 
 
 # ==================================================
@@ -595,18 +409,47 @@ def run_all_scanners():
 
 # ================= MAIN BOT =======================
 
-def main():
+def wait_until_session_prep():
+    """09:19:30 AM tak wait karega taaki 09:20 candle close hone se 30s pehle session ready ho."""
+    while True:
+        now_ist = get_ist_now()
+        prep_time = now_ist.replace(hour=9, minute=19, second=30, microsecond=0)
 
+        if now_ist >= prep_time:
+            break
+
+        wait_seconds = (prep_time - now_ist).total_seconds()
+        log(f"WAITING FOR 1ST CANDLE COMPLETION (09:20 AM) | Remaining: {int(wait_seconds)}s")
+        time.sleep(min(wait_seconds, 30))
+
+
+def wait_until_first_candle_close():
+    """Exact 09:20:05 AM tak wait karega (jab 09:15-09:20 ki candle complete ho chuki hogi)."""
+    while True:
+        now_ist = get_ist_now()
+        candle_close = now_ist.replace(hour=9, minute=20, second=5, microsecond=0)
+
+        if now_ist >= candle_close:
+            break
+
+        wait_seconds = (candle_close - now_ist).total_seconds()
+        time.sleep(min(wait_seconds, 0.5))
+
+
+def main():
     log("=" * 55)
-    log("4-SCANNER CHARTINK BOT INITIALIZING")
+    log("09:15-09:20 CANDLE COMPLETION BOT INITIALIZING")
     log(f"BOT START TIME: {get_ist_time('%Y-%m-%d %H:%M:%S IST')}")
     log(f"TOTAL SCANNERS: {len(SCANNERS)}")
-    log(f"SCAN INTERVAL: {SCAN_INTERVAL_SECONDS} seconds")
-    log(f"FALCON REPEAT COOLDOWN: {REPEAT_COOLDOWN_MINS} minutes")
     log("=" * 55)
 
     if not BOT_TOKEN:
         log("FATAL ERROR: TELEGRAM_BOT_TOKEN secret is missing.")
+        return
+
+    now_ist = get_ist_now()
+    if now_ist.hour > 12 or (now_ist.hour == 12 and now_ist.minute >= 5):
+        log("12:05 PM IST already passed. Exiting.")
         return
 
     state = load_state()
@@ -615,66 +458,50 @@ def main():
         log("FATAL ERROR: Telegram startup test failed. Bot stopping.")
         return
 
-    log("ALL SCANNERS ACTIVE.")
+    # Step 1: 09:19:30 AM tak wait karein (Running candle me scan nahi karega)
+    wait_until_session_prep()
+
+    # Step 2: 09:19:30 par Chartink session aur CSRF token ready kar lein
+    session = None
+    try:
+        session = init_chartink_session()
+    except Exception as e:
+        log(f"SESSION PREP ERROR: {e}")
+
+    # Step 3: Exact 09:20:05 AM tak wait karein (Candle complete hone ka time)
+    wait_until_first_candle_close()
+    log("09:20 AM CANDLE COMPLETED! STARTING SCANS NOW.")
 
     while True:
-
         now_ist = get_ist_now()
 
-        if (
-            now_ist.hour > 15
-            or (
-                now_ist.hour == 15
-                and now_ist.minute >= 35
-            )
-        ):
-
-            log(
-                "MARKET SESSION END | "
-                "03:35 PM IST reached. Stopping bot."
-            )
-
-            final_state = load_state()
-            save_state(final_state)
-
+        # Dopahar 12:05 PM IST par bot band ho jayega
+        if now_ist.hour > 12 or (now_ist.hour == 12 and now_ist.minute >= 5):
+            log("MORNING SESSION END | 12:05 PM IST reached. Stopping bot.")
+            save_state(state)
             break
 
         loop_started = time.monotonic()
 
-        log(
-            f"NEXT SCAN LOOP | "
-            f"Current time: {get_ist_time()}"
-        )
-
         try:
-            run_all_scanners()
+            if session is None:
+                session = init_chartink_session()
+
+            ok = run_all_scanners(session, state)
+            if not ok:
+                session = None
 
         except Exception as e:
-
             log(f"MAIN LOOP ERROR: {e}")
             traceback.print_exc()
+            session = None
 
         loop_elapsed = time.monotonic() - loop_started
-
-        log(
-            f"LOOP PROCESSING TIME: {loop_elapsed:.2f}s"
-        )
-
-        sleep_time = max(
-            0,
-            SCAN_INTERVAL_SECONDS - loop_elapsed
-        )
-
-        log(
-            f"NEXT CYCLE IN: {sleep_time:.2f} seconds"
-        )
+        sleep_time = max(1, SCAN_INTERVAL_SECONDS - loop_elapsed)
 
         time.sleep(sleep_time)
 
     log("BOT STOPPED SUCCESSFULLY.")
-
-
-# ==================================================
 
 
 if __name__ == "__main__":
