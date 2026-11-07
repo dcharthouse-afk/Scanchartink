@@ -1,24 +1,27 @@
-name: Chartink 4-Scanner Bot
+name: Chartink Morning Scanner Bot
 
 on:
   schedule:
-    # Subah 8:50 AM IST (3:20 UTC) par start hoga, aur agar kabhi ruka to har ghante check karega
-    - cron: '20 3-9 * * 1-5'
+    # 1st Trigger: 08:12 AM IST (02:42 UTC) - Queue delay se bachne ke liye 1 ghanta pehle
+    - cron: '42 2 * * 1-5'
+    # 2nd Backup Trigger: 08:42 AM IST (03:12 UTC) - Agar pehla miss ho jaye
+    - cron: '12 3 * * 1-5'
+    # 3rd Backup Trigger: 09:12 AM IST (03:42 UTC)
+    - cron: '42 3 * * 1-5'
   workflow_dispatch:
 
-# SABSE ZAROORI: Ye ek time par SIRF 1 BOT chalne dega! Duplicate bots ko rok dega.
+# Ek time par SIRF 1 BOT chalne dega! Duplicate bots ko rok dega.
 concurrency:
-  group: chartink-4-scanner-bot
+  group: chartink-morning-scanner-bot
   cancel-in-progress: false
 
-# Memory file (alert_state.json) save karne ki permission
 permissions:
   contents: write
 
 jobs:
   run-bot:
     runs-on: ubuntu-latest
-    timeout-minutes: 350 # Max ~6 hours (8:50 AM se 3:00 PM+), zarurat padne par agli shift sambhal legi
+    timeout-minutes: 250 # ~4 Hours (8:12 AM se 12:20 PM IST tak ke liye kaafi hai)
 
     steps:
       - name: Checkout code
@@ -28,6 +31,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
+          cache: 'pip'
 
       - name: Install dependencies
         run: pip install requests beautifulsoup4
@@ -35,7 +39,8 @@ jobs:
       - name: Run scanner script
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-        run: python main.py
+          PYTHONUNBUFFERED: "1"
+        run: python -u main.py
         continue-on-error: true
 
       # Bot band hone par aaj ke stocks ki memory GitHub me save karega
